@@ -136,5 +136,30 @@ if($action == "send_message"){
 	if($save)
 		echo $save;
 }
+if($action == "notify_user"){
+	$save = $crud->notify_user();
+	if($save)
+		echo $save;
+}
+if($action == "user_checkout"){
+	$save = $crud->user_checkout();
+	if($save)
+		echo $save;
+}
+if($action == "update_payment_method"){
+	$save = $crud->update_payment_method();
+	if($save)
+		echo $save;
+}
+if($action == "checkout_gcash"){
+	$save = $crud->checkout_gcash();
+	if($save)
+		echo $save;
+}
+if($action == "update_order_status"){
+	$save = $crud->update_order_status();
+	if($save)
+		echo $save;
+}
 ob_end_flush();
 ?>

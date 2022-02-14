@@ -40,9 +40,11 @@
                             href="http://localhost/infinitegreen-v2-store">Store</a></li>
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="index.php?page=about">About</a>
                     </li>
+                    <?php if(isset($_SESSION['login_id'])): ?>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="index.php?page=orders">Orders</a>
+                    </li>
                     <li class="nav-item"><a class="nav-link js-scroll-trigger"
                             href="index.php?page=messages">Messages</a></li>
-                    <?php if(isset($_SESSION['login_id'])): ?>
                     <li class="nav-item"><a class="nav-link js-scroll-trigger"
                             href="admin/ajax.php?action=logout2"><?php echo "Welcome ".$_SESSION['login_name'] ?> <i
                                 class="fa fa-power-off"></i></a></li>
@@ -135,7 +137,7 @@
                     <?php else: ?>
                     <a class="d-block go-to-login" href="javascript:void(0)">Contact Support</a>
                     <?php endif; ?>
-                </div>              
+                </div>
                 <div class="col-lg-4 mr-auto text-center">
                     <i class="fas fa-envelope fa-3x mb-3 text-muted"></i>
                     <!-- Make sure to change the email address in BOTH the anchor text and the link target below!-->

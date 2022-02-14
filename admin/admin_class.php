@@ -410,4 +410,155 @@ Class Action {
 			return 1;		
 	}
 
+	function notify_user(){
+		extract($_POST);
+		$data = " id = '$id' ";
+		$data .= ", status = '2'";
+
+		// if(empty($sender_id)){
+		// 	return 2;
+		// }else{
+		// 	$save = $this->db->query("INSERT INTO chatlog set $data");
+		// }
+		
+		$save = $this->db->query("UPDATE bids set $data where id = $id");
+
+		if($save)
+			return 1;		
+	}
+
+	function user_checkout(){
+		extract($_POST);
+		$data = " id = '$id' ";
+		$data .= ", status = '2'";
+
+		// if(empty($sender_id)){
+		// 	return 2;
+		// }else{
+		// 	$save = $this->db->query("INSERT INTO chatlog set $data");
+		// }
+		
+		$save = $this->db->query("UPDATE bids set $data where id = $id");
+
+		if($save)
+			return 1;		
+	}
+
+	function update_payment_method(){		
+		extract($_POST);
+		if($updatePaymentMethod == 2 && isset($_SESSION['payment_method'])){			
+			$_SESSION['selectedBidId'] = $bidId;
+			return 1;
+			exit();
+		}
+
+		else if($updatePaymentMethod == 1 && isset($payment_method)){
+			unset($_SESSION['payment_method']);
+			$_SESSION['payment_method'] = $payment_method;
+			return 2;
+			exit();
+		}
+		
+		return 3;
+		exit();
+			
+	}
+
+	function checkout_payment(){
+		if(isset($_SESSION['payment_method'])){
+			return 1;
+			exit();
+		}
+		else{
+			return 2;
+			exit();
+		}			
+	}
+
+	function checkout_gcash(){
+		$generatedId =  $_SESSION['login_name'] . '_' . $_SESSION['login_id'] . '_' . $this->GUID();
+		$generateDate = date('m/d/Y h:i:s a', time());
+		// PAYMONGO API
+		$url = 'https://api.paymongo.com/v1/sources';
+		// changeable
+		$public_key = 'pk_test_jnCvv3S3fxknkssw1uUwA2wR';
+		$secret_key = 'sk_test_JCWt7DwW54K4wSu3PvuUv7wS';
+
+		$data =[ "data" => [
+				"attributes" => [
+					//changeable
+					"amount" => (float)($_POST['total'])*100,
+					"redirect" => [
+						// success and invalid page changeable
+						"success" => "http://localhost/infinitegreen-v2-auction/index.php?page=success-payment",
+						"failed" => "http://localhost/infinitegreen-v2-auction/index.php?page=invalid-payment",
+					],
+					"type" => "gcash",
+					"currency" => "PHP",
+					"billing" => [
+						"name" => $generatedId,
+						"phone" => $_POST['accountNumber'],
+						"email" => $_SESSION['login_email']
+					]
+				]
+			]];
+
+		$dataText = $data_string = json_encode($data);
+		$curl = curl_init($url);
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_USERPWD, "$secret_key:$secret_key");
+		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+		curl_setopt(
+			$curl,
+			CURLOPT_HTTPHEADER,
+			array('Content-Type: application/json')
+		);
+		
+		
+		$resp = curl_exec($curl);
+		curl_close($curl);
+		$json_a=json_decode($resp, true);
+		
+		if(isset($json_a)){
+			// return var_dump($json_a);
+			$generateOrderId = $generatedId."_".$generateDate;
+			$user_id = $_SESSION['login_id'];
+			$address = $_SESSION['login_address'];
+			$account_name = $_SESSION['login_name'];
+			$account_number = $_POST['accountNumber'];
+
+			$_SESSION['current_gcash_source_id'] = $json_a['data']['id'];
+			$_SESSION['current_product_price'] = (float)($_POST['total'])*100;
+			$_SESSION['current_gcash_product_description'] = $json_a['data']['attributes']['billing']['name'] . $json_a['data']['attributes']['created_at'];
+			return $json_a["data"]["attributes"]["redirect"]["checkout_url"];
+			exit();
+		}
+		// if( (float)($_POST['total']) >= 100 ){
+		// }
+		return 2;
+		exit();		
+	}
+
+	function update_order_status(){
+		extract($_POST);
+		if(empty($id)){
+			return 2;
+		}else{
+			$save = $this->db->query("UPDATE `bids` SET `status` = '".$status."' WHERE id=".$id);
+		}
+		if($save)
+			return 1;
+	}
+
+	private function GUID()
+	{
+		if (function_exists('com_create_guid') === true) {
+			return trim(com_create_guid(), '{}');
+		}
+
+		return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
+	}
+
 }
