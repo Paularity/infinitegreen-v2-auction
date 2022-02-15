@@ -36,21 +36,12 @@ a.btn.btn-payment-method:hover {
 }
 </style>
 <div class="container-fluid">
-    <div class="row p-4 bg-light">
-        <!-- <div class="col-md-12">            
-            <a href="javascript:void(0)" id="btn-card" class="btn btn-payment-method <?= ($_SESSION['payment_method'] == 'card') ? 'selected' : '' ?>"> Credit /
-                Debit Card </a>
-        </div> -->
+    <div class="row p-4 bg-light">        
         <div class="col-md-12">
             <div id="msg"></div>
             <a href="javascript:void(0)" id="btn-gcash"
-                class="btn btn-payment-method <?= ($_SESSION['payment_method'] == 'gcash') ? 'selected' : '' ?>"> Gcash
+                class="btn btn-payment-method <?= (isset($_SESSION['payment_method']) && $_SESSION['payment_method'] == 'gcash') ? 'selected' : '' ?>"> Gcash
             </a>
-        </div>
-        <div class="col-md-12">
-            <a href="javascript:void(0)" id="btn-cod"
-                class="btn btn-payment-method <?= ($_SESSION['payment_method'] == 'cod') ? 'selected' : '' ?>"> Cash on
-                Delivery </a>
         </div>
     </div>
     <hr>
