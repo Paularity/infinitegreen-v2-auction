@@ -72,7 +72,7 @@
                                         <?php elseif($row['status'] == 4): ?>
                                         <span class="badge badge-info">Shipped</span>
                                         <?php elseif($row['status'] == 5): ?>
-                                        <span class="badge badge-info">Delivered</span>
+                                        <span class="badge badge-success">Delivered</span>
                                         <?php else: ?>
                                         <span class="badge badge-danger">Canceled</span>
                                         <?php endif; ?>
